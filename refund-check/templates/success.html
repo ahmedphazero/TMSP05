@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="alert ok" role="status">
+  <strong>Success.</strong> Your application passed all checks.
+</div>
+<dl>
+  <dt>Reference</dt><dd>#{{ reference }}</dd>
+  <dt>EXTIN</dt><dd>{{ values.extin|upper }}</dd>
+  <dt>Category</dt><dd>{{ category_label }}</dd>
+  <dt>Period</dt><dd>{{ values.period_from }} to {{ values.period_to }}</dd>
+  <dt>Amount</dt><dd>{{ values.amount }} OMR</dd>
+</dl>
+<p><a href="{{ url_for('index') }}">Submit another application</a></p>
+{% endblock %}

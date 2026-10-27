@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if problems %}
+<div class="alert error" role="alert">
+  <strong>Your application has {{ problems|length }} problem{{ '' if problems|length == 1 else 's' }}:</strong>
+  <ul>
+    {% for p in problems %}<li>{{ p.message }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" novalidate>
+
+  <label>Excise number (EXTIN)
+    <input name="extin" value="{{ values.get('extin', '') }}" class="{{ 'bad' if errors.get('extin') }}">
+  </label>
+
+  <label>Refund category
+    <select name="category" class="{{ 'bad' if errors.get('category') }}">
+      <option value="">-- choose --</option>
+      {% for key, label in categories.items() %}
+      <option value="{{ key }}" {{ 'selected' if values.get('category') == key }}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <div class="row">
+    <label>Period from
+      <input type="date" name="period_from" value="{{ values.get('period_from', '') }}"
+             class="{{ 'bad' if errors.get('period_from') }}">
+    </label>
+    <label>Period to
+      <input type="date" name="period_to" value="{{ values.get('period_to', '') }}"
+             class="{{ 'bad' if errors.get('period_to') }}">
+    </label>
+  </div>
+
+  <label>Claim amount (OMR)
+    <input name="amount" inputmode="decimal" value="{{ values.get('amount', '') }}"
+           class="{{ 'bad' if errors.get('amount') }}">
+  </label>
+
+  <label>Invoice references <small>(comma or one per line)</small>
+    <textarea name="invoices" rows="3" class="{{ 'bad' if errors.get('invoices') }}">{{ values.get('invoices', '') }}</textarea>
+  </label>
+
+  <fieldset>
+    <legend>Supporting documents (PDF, PNG, JPG)</legend>
+    <p class="hint">Required documents depend on the category:
+      {% for key, label in categories.items() %}
+        <br><strong>{{ label }}:</strong>
+        {% for d in required[key] %}{{ documents[d] }}{{ ', ' if not loop.last }}{% endfor %}
+      {% endfor %}
+    </p>
+    {% for key, label in documents.items() %}
+    <label>{{ label }}
+      <input type="file" name="{{ key }}" class="{{ 'bad' if errors.get(key) }}">
+    </label>
+    {% endfor %}
+    <p class="hint">Files are not kept: choose them again if you need to resubmit.</p>
+  </fieldset>
+
+  <button type="submit">Submit application</button>
+</form>
+{% endblock %}
